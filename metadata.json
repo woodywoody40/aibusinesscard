@@ -1,0 +1,8 @@
+{
+  "name": "名片掃描管家 (AI Card Scanner)",
+  "description": "An intelligent business card scanner powered by Google Gemini. It automatically extracts contact information, crops avatars, and organizes contacts by industry. Features include a beautiful Morandi-themed UI, dark/light modes, search, and data import/export.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "prompt": ""
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>名片掃描管家 (AI Card Scanner)</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#53565C" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      :root {
+        /* Morandi Light Theme */
+        --bg-light: #DDD0C8;
+        --text-light: #53565C;
+        --text-secondary-light: #8C736F;
+        --surface-light: #E2C6C4;
+        --border-light: #B1ACB3;
+        --primary-light: #A08887;
+        --secondary-light: #AAB8AB;
+
+        /* Morandi Dark Theme */
+        --bg-dark: #53565C;
+        --text-dark: #DDD0C8;
+        --text-secondary-dark: #ADAAA5;
+        --surface-dark: #8C736F;
+        --border-dark: #A08887;
+        --primary-dark: #D4B8B4;
+        --secondary-dark: #AAB8AB;
+        
+        --glow-color-1: var(--primary-light);
+        --glow-color-2: var(--secondary-light);
+        
+        --shadow-color: 223deg 5% 50%;
+        --shadow-elevation-low:
+          0.1px 0.2px 0.3px hsl(var(--shadow-color) / 0.34),
+          0.2px 0.4px 0.7px -1.2px hsl(var(--shadow-color) / 0.34),
+          0.4px 0.9px 1.5px -2.5px hsl(var(--shadow-color) / 0.34);
+        --shadow-elevation-medium:
+          0.1px 0.2px 0.3px hsl(var(--shadow-color) / 0.36),
+          0.4px 0.8px 1.3px -0.8px hsl(var(--shadow-color) / 0.36),
+          0.9px 1.9px 3.2px -1.7px hsl(var(--shadow-color) / 0.36),
+          2.3px 4.6px 7.7px -2.5px hsl(var(--shadow-color) / 0.36);
+      }
+      .dark:root {
+         --shadow-color: 223deg 5% 5%;
+         --glow-color-1: var(--primary-dark);
+         --glow-color-2: var(--secondary-dark);
+      }
+      body {
+        font-family: 'Noto Sans TC', sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-light);
+      }
+      .dark body {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+      }
+      .transition-bg {
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .card-glow::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 1.1rem; /* slightly larger than card's rounded-2xl */
+        border: 2px solid transparent;
+        background: conic-gradient(from 180deg at 50% 50%, var(--glow-color-1), var(--glow-color-2), var(--glow-color-1)) border-box;
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .card-glow:hover::before {
+        opacity: 1;
+      }
+    </style>
+    <script>
+      document.documentElement.classList.add('js-focus-visible');
+    </script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'morandi': {
+                1: '#8C736F', // Muted Brown
+                2: '#D4B8B4', // Dusty Rose
+                3: '#ADAAA5', // Stone Gray
+                4: '#B7B7BD', // Lavender Gray
+                5: '#AAB8AB', // Sage Green
+                6: '#DDD0C8', // Almond
+                7: '#A08887', // Rose Taupe
+                8: '#E2C6C4', // Pastel Pink
+                9: '#B1ACB3', // Grayish Lavender
+                10: '#53565C', // Charcoal
+              },
+
+              // Semantic Mapping
+              'light-bg': 'var(--bg-light, #DDD0C8)',
+              'light-text': 'var(--text-light, #53565C)',
+              'light-text-secondary': 'var(--text-secondary-light, #8C736F)',
+              'light-surface': 'var(--surface-light, #E2C6C4)',
+              'light-border': 'var(--border-light, #B1ACB3)',
+              'light-primary': 'var(--primary-light, #A08887)',
+              'light-secondary': 'var(--secondary-light, #AAB8AB)',
+
+              'dark-bg': 'var(--bg-dark, #53565C)',
+              'dark-text': 'var(--text-dark, #DDD0C8)',
+              'dark-text-secondary': 'var(--text-secondary-dark, #ADAAA5)',
+              'dark-surface': 'var(--surface-dark, #8C736F)',
+              'dark-border': 'var(--border-dark, #A08887)',
+              'dark-primary': 'var(--primary-dark, #D4B8B4)',
+              'dark-secondary': 'var(--secondary-dark, #AAB8AB)',
+            },
+            boxShadow: {
+              'neo-low': 'var(--shadow-elevation-low)',
+              'neo-medium': 'var(--shadow-elevation-medium)',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom": "https://esm.sh/react-dom@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.7.0",
+    "framer-motion": "https://esm.sh/framer-motion@^11.3.11"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" src="./index.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+        });
+      }
+    </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

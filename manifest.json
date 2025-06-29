@@ -1,0 +1,21 @@
+{
+  "short_name": "名片管家",
+  "name": "名片掃描管家 (AI Card Scanner)",
+  "description": "An intelligent business card scanner powered by Google Gemini.",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#f8f7f2",
+  "background_color": "#f8f7f2"
+}
