@@ -1,7 +1,10 @@
-const CACHE_NAME = 'ai-card-scanner-v3';
+const CACHE_NAME = 'ai-card-scanner-v4';
 const urlsToCache = [
   './',
   './index.html',
+  './manifest.json',
+  './icon-192x192.svg',
+  './icon-512x512.svg',
   'https://cdn.tailwindcss.com',
   'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap'
 ];
